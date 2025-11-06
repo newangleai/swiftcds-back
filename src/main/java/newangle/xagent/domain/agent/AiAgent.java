@@ -15,11 +15,16 @@ import jakarta.persistence.Table;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import newangle.xagent.domain.user.User;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,29 +35,97 @@ import newangle.xagent.domain.user.User;
 public class AiAgent {
 
     // === A2A COMPLIANCE ===
+
+    /** The version of the A2A protocol this agent supports. */
     private String protocolVersion;
+
+    /** A human-readable name for the agent. */
     private String name;
+
+    /** A human-readable description of the agent. */
     private String description;
+
+    /** The preferred endpoint URL for interacting with the agent. */
     private String url;
-    private TransportProtocol transportProtocol;
-    private AgentInterface agentInterface;
+
+    /** * The transport protocol for the preferred endpoint. 
+     * Renomeado de 'transportProtocol' e tipo mudado para String para suportar 'TransportProtocol | string'.
+     */
+    private String preferredTransport;
+
+    /** * A list of additional supported interfaces.
+     * Alterado de 'AgentInterface' singular para 'List<AgentInterface>'.
+     */
+    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AgentInterface> additionalInterfaces;
+
+    /** An optional URL to an icon for the agent. */
     private String iconUrl;
+
+    /** * Information about the agent's service provider. 
+     * Assumindo que será armazenado como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
     private AgentProvider provider;
+
+    /** The agent's own version number. */
     private String version;
+
+    /** An optional URL to the agent's documentation. */
     private String documentationUrl;
-    private AgentCapabilities agentCapabilities;
-    // private Map<String, SecurityScheme> securitySchemes; -> A declaration of the security schemes available to authorize requests. The key is the scheme name. Follows the OpenAPI 3.0 Security Scheme Object
+
+    /** * A declaration of optional capabilities supported by the agent.
+     * Renomeado de 'agentCapabilities'. Assumindo que será armazenado como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private AgentCapabilities capabilities;
+
+    /** * A declaration of the security schemes available.
+     * Descomentado e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, SecurityScheme> securitySchemes;
+
+    /** * A list of security requirement objects.
+     * Tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
     private List<Map<String, List<String>>> security;
-    private String[] defaultInputModes;
-    private String[] defaultOutputModes;
-    private AgentSkill agentSkill;
+
+    /** * Default set of supported input MIME types.
+     * Alterado de String[] para List<String> e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> defaultInputModes;
+
+    /** * Default set of supported output MIME types.
+     * Alterado de String[] para List<String> e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> defaultOutputModes;
+
+    /** * The set of skills that the agent can perform.
+     * Alterado de 'AgentSkill' singular para 'List<AgentSkill>'.
+     */
+    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AgentSkill> skills;
+
+    /** If true, the agent can provide an extended agent card to authenticated users. */
     private Boolean supportsAuthenticatedExtendedCard;
-    private AgentCardSignature signatures;
+
+    /** * JSON Web Signatures computed for this AgentCard.
+     * Alterado de 'AgentCardSignature' singular para 'List<AgentCardSignature>'.
+     */
+    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AgentCardSignature> signatures;
     
+    // =======================
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    
     private Instant createdAt;
     
     @JsonBackReference
