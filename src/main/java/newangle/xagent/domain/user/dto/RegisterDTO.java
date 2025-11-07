@@ -1,9 +1,13 @@
 package newangle.xagent.domain.user.dto;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import newangle.xagent.domain.agent.AiAgent;
+import newangle.xagent.domain.user.UserRole;
 
 public record RegisterDTO(
     @NotBlank(message = "username is a required field")
@@ -19,7 +23,11 @@ public record RegisterDTO(
 
     @NotBlank(message = "password is a required field")
     @Size(min = 8, message = "password must be at least 8 characters")
-    String password 
+    String password,
+
+    UserRole role,
+
+    Set<AiAgent> aiAgents
 ) {
-    
+
 }

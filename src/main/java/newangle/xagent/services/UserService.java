@@ -11,9 +11,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import newangle.xagent.domain.user.User;
 import newangle.xagent.domain.user.UserRole;
 import newangle.xagent.domain.user.dto.RegisterDTO;
-import newangle.xagent.domain.user.User;
 import newangle.xagent.repositories.UserRepository;
 import newangle.xagent.services.exceptions.ResourceNotFoundException;
 import newangle.xagent.services.exceptions.UserAlreadyExistsException;
@@ -47,12 +47,11 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(data.password());
-        User user = new User(data.username(), encodedPassword, data.email(), data.phoneNumber(), UserRole.USER);
 
-        User saved = userRepository.save(user);
-        // Audit: user created (no sensitive data)
-        log.info("audit.user.created userId={} username={} email={}", saved.getId(), saved.getUsername(), saved.getEmail());
-        return saved;
+        User user = new User(data.username(), data.email(), data.phoneNumber(), encodedPassword, UserRole.USER, data.aiAgents());
+
+        User newUser = userRepository.save(user);
+        return newUser;
     }
 
     public User updateUser(Long id, User u) {

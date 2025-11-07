@@ -49,12 +49,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AiAgent> aiAgents = new HashSet<>();
 
-    public User(String username, String password, String email, String phoneNumber, UserRole role) {
+    public User(String username, String email, String password, String phoneNumber, UserRole role, Set<AiAgent> aiAgents) {
         this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.aiAgents = aiAgents;
     }
 
     @Override

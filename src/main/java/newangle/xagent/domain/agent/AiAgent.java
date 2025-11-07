@@ -5,26 +5,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import newangle.xagent.domain.user.User;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -56,7 +54,7 @@ public class AiAgent {
     /** * A list of additional supported interfaces.
      * Alterado de 'AgentInterface' singular para 'List<AgentInterface>'.
      */
-    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.JSON)
     private List<AgentInterface> additionalInterfaces;
 
     /** An optional URL to an icon for the agent. */
@@ -107,7 +105,7 @@ public class AiAgent {
     /** * The set of skills that the agent can perform.
      * Alterado de 'AgentSkill' singular para 'List<AgentSkill>'.
      */
-    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.JSON)
     private List<AgentSkill> skills;
 
     /** If true, the agent can provide an extended agent card to authenticated users. */
@@ -116,7 +114,7 @@ public class AiAgent {
     /** * JSON Web Signatures computed for this AgentCard.
      * Alterado de 'AgentCardSignature' singular para 'List<AgentCardSignature>'.
      */
-    @OneToMany(mappedBy = "aiAgent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.JSON)
     private List<AgentCardSignature> signatures;
     
     // =======================
