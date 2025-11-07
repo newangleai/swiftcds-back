@@ -41,7 +41,7 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(data.password());
-        User user = new User(data.username(), encodedPassword, data.email(), data.phoneNumber(), UserRole.USER);
+        User user = new User(data.username(), encodedPassword, data.email(), data.phoneNumber(), UserRole.USER, data.aiAgents());
 
         return userRepository.save(user);
     }
