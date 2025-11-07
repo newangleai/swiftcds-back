@@ -1,7 +1,12 @@
 package newangle.artifex.domain.agent;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -28,29 +33,97 @@ import newangle.artifex.domain.user.User;
 public class AiAgent {
 
     // === A2A COMPLIANCE ===
-    // private String protocolVersion;
+
+    /** The version of the A2A protocol this agent supports. */
+    private String protocolVersion;
+
+    /** A human-readable name for the agent. */
     private String name;
+
+    /** A human-readable description of the agent. */
     private String description;
-    // private String url;
-    // private TransportProtocol transportProtocol;
-    // private AgentInterface agentInterface;
-    // private String iconUrl;
-    // private AgentProvider provider;
-    // private String version;
-    // private String documentationUrl;
-    // private AgentCapabilities agentCapabilities;
-    // // private Map<String, SecurityScheme> securitySchemes; -> A declaration of the security schemes available to authorize requests. The key is the scheme name. Follows the OpenAPI 3.0 Security Scheme Object
-    // private List<Map<String, List<String>>> security;
-    // private String[] defaultInputModes;
-    // private String[] defaultOutputModes;
-    // private AgentSkill agentSkill;
-    // private Boolean supportsAuthenticatedExtendedCard;
-    // private AgentCardSignature signatures;
+
+    /** The preferred endpoint URL for interacting with the agent. */
+    private String url;
+
+    /** * The transport protocol for the preferred endpoint. 
+     * Renomeado de 'transportProtocol' e tipo mudado para String para suportar 'TransportProtocol | string'.
+     */
+    private String preferredTransport;
+
+    /** * A list of additional supported interfaces.
+     * Alterado de 'AgentInterface' singular para 'List<AgentInterface>'.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<AgentInterface> additionalInterfaces;
+
+    /** An optional URL to an icon for the agent. */
+    private String iconUrl;
+
+    /** * Information about the agent's service provider. 
+     * Assumindo que será armazenado como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Object provider;
+
+    /** The agent's own version number. */
+    private String version;
+
+    /** An optional URL to the agent's documentation. */
+    private String documentationUrl;
+
+    /** * A declaration of optional capabilities supported by the agent.
+     * Renomeado de 'agentCapabilities'. Assumindo que será armazenado como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private AgentCapabilities capabilities;
+
+    /** * A declaration of the security schemes available.
+     * Descomentado e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, SecurityScheme> securitySchemes;
+
+    /** * A list of security requirement objects.
+     * Tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<Map<String, List<String>>> security;
+
+    /** * Default set of supported input MIME types.
+     * Alterado de String[] para List<String> e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> defaultInputModes;
+
+    /** * Default set of supported output MIME types.
+     * Alterado de String[] para List<String> e tipo definido como JSON.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> defaultOutputModes;
+
+    /** * The set of skills that the agent can perform.
+     * Alterado de 'AgentSkill' singular para 'List<AgentSkill>'.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<AgentSkill> skills;
+
+    /** If true, the agent can provide an extended agent card to authenticated users. */
+    private Boolean supportsAuthenticatedExtendedCard;
+
+    /** * JSON Web Signatures computed for this AgentCard.
+     * Alterado de 'AgentCardSignature' singular para 'List<AgentCardSignature>'.
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<AgentCardSignature> signatures;
     
+    // =======================
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    
     private Instant createdAt;
     
     @JsonBackReference
